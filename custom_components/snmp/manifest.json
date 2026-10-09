@@ -3,10 +3,10 @@
   "name": "SNMP",
   "codeowners": ["@dhover"],
   "config_flow": true,
-  "documentation": "https://www.home-assistant.io/integrations/snmp",
+  "documentation": "https://github.com/dhover/ha-snmp",
   "iot_class": "local_polling",
   "loggers": ["pyasn1", "pysmi", "pysnmp"],
   "quality_scale": "legacy",
   "requirements": [],
-  "version": "1.0.8"
+  "version": "1.0.9"
 }

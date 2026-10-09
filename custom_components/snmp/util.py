@@ -2,6 +2,9 @@
 
 import logging
 
+from homeassistant.const import EVENT_HOMEASSISTANT_STOP
+from homeassistant.core import Event, HomeAssistant, callback
+from homeassistant.helpers.singleton import singleton
 from pysnmp.hlapi.v3arch.asyncio import (
     CommunityData,
     ContextData,
@@ -14,10 +17,6 @@ from pysnmp.hlapi.v3arch.asyncio import (
 )
 from pysnmp.hlapi.v3arch.asyncio.cmdgen import LCD
 from pysnmp.smi import view
-
-from homeassistant.const import EVENT_HOMEASSISTANT_STOP
-from homeassistant.core import Event, HomeAssistant, callback
-from homeassistant.helpers.singleton import singleton
 
 DATA_SNMP_ENGINE = "snmp_engine"
 

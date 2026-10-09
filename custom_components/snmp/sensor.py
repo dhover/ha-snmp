@@ -1,9 +1,13 @@
 """Support for displaying collected data over SNMP."""
 
-from datetime import timedelta
+import asyncio
 import logging
 from struct import unpack
 from typing import override
+from datetime import timedelta
+
+# pylint: disable=import-error
+# pyright: reportMissingImports=false, reportMissingModuleSource=false
 
 import probatio
 from pyasn1.codec.ber import decoder
@@ -19,7 +23,7 @@ from pysnmp.hlapi.v3arch.asyncio import (
 from pysnmp.proto.rfc1902 import Opaque
 from pysnmp.proto.rfc1905 import NoSuchObject
 
-from homeassistant.config_entries import ConfigEntry
+from homeassistant.config_entries import SOURCE_IMPORT, ConfigEntry
 from homeassistant.components.sensor import (
     CONF_STATE_CLASS,
     PLATFORM_SCHEMA as SENSOR_PLATFORM_SCHEMA,
@@ -124,8 +128,80 @@ async def async_setup_platform(
     async_add_entities: AddEntitiesCallback,
     discovery_info: DiscoveryInfoType | None = None,
 ) -> None:
-    """Set up the SNMP sensor."""
+    """Set up the SNMP sensor, importing the YAML configuration when possible."""
+    if await _async_import_yaml(hass, config):
+        return
     await async_setup_sensors(hass, config, [config], async_add_entities)
+
+
+IMPORT_DEVICE_KEYS = (
+    CONF_HOST,
+    CONF_PORT,
+    CONF_VERSION,
+    CONF_COMMUNITY,
+    CONF_USERNAME,
+    CONF_AUTH_KEY,
+    CONF_AUTH_PROTOCOL,
+    CONF_PRIV_KEY,
+    CONF_PRIV_PROTOCOL,
+)
+IMPORT_SENSOR_KEYS = (
+    CONF_BASEOID,
+    CONF_ACCEPT_ERRORS,
+    CONF_DEFAULT_VALUE,
+    CONF_DEVICE_CLASS,
+    CONF_STATE_CLASS,
+    CONF_UNIT_OF_MEASUREMENT,
+    CONF_UNIQUE_ID,
+    CONF_ICON,
+)
+# Options a config entry cannot store; sensors using them stay on YAML
+IMPORT_UNSUPPORTED_KEYS = (CONF_VALUE_TEMPLATE, CONF_PICTURE, CONF_AVAILABILITY)
+
+
+async def _async_import_yaml(hass: HomeAssistant, config: ConfigType) -> bool:
+    """Import a YAML sensor into a config entry. Return True when imported."""
+    host = config.get(CONF_HOST)
+    if any(config.get(key) is not None for key in IMPORT_UNSUPPORTED_KEYS):
+        _LOGGER.warning(
+            "SNMP YAML sensor %s for %s uses a template option that cannot be "
+            "imported into the UI; it stays configured in YAML",
+            config.get(CONF_NAME),
+            host,
+        )
+        return False
+
+    name = config.get(CONF_NAME)
+    if isinstance(name, Template):
+        name = name.template
+    device = {k: config[k] for k in IMPORT_DEVICE_KEYS if config.get(k) is not None}
+    device[CONF_PORT] = int(device[CONF_PORT])
+    device[CONF_NAME] = f"SNMP {host}"
+    sensor = {k: config[k] for k in IMPORT_SENSOR_KEYS if config.get(k) is not None}
+    sensor[CONF_NAME] = name or DEFAULT_NAME
+
+    # Serialize imports so sensors of one host end up in the same entry
+    lock = hass.data.setdefault(f"{DOMAIN}_import_lock", asyncio.Lock())
+    async with lock:
+        _LOGGER.debug(
+            "Importing YAML sensor %s (%s:%s, OID %s)",
+            sensor[CONF_NAME],
+            host,
+            device[CONF_PORT],
+            sensor[CONF_BASEOID],
+        )
+        await hass.config_entries.flow.async_init(
+            DOMAIN,
+            context={"source": SOURCE_IMPORT},
+            data={**device, CONF_SENSORS: [sensor]},
+        )
+    _LOGGER.warning(
+        "The SNMP YAML configuration for %s (OID %s) was imported into the UI; "
+        "you can remove it from configuration.yaml",
+        host,
+        sensor[CONF_BASEOID],
+    )
+    return True
 
 
 async def async_setup_entry(
@@ -263,7 +339,7 @@ class SnmpSensor(ManualTriggerSensorEntity):
     def __init__(
         self,
         hass: HomeAssistant,
-        data: SnmpData,
+        data: "SnmpData",
         config: ConfigType,
         value_template: ValueTemplate | None,
         device_info: DeviceInfo | None = None,
@@ -299,7 +375,7 @@ class SnmpSensor(ManualTriggerSensorEntity):
             "Sensor %s (%s, OID %s): raw value=%r, value template=%s, final value=%r",
             self.entity_id,
             self.data.host,
-            self.data._baseoid,  # noqa: SLF001
+            self.data.baseoid,
             raw_value,
             self._value_template,
             value,
@@ -318,6 +394,7 @@ class SnmpData:
         """Initialize the data object."""
         self._request_args = request_args
         self._baseoid = baseoid
+        self.baseoid = baseoid
         self._accept_errors = accept_errors
         self._default_value = default_value
         self.host = host

@@ -6,7 +6,6 @@ import logging
 from typing import Any
 
 import voluptuous as vol
-
 from homeassistant import config_entries
 from homeassistant.const import (
     CONF_HOST,
@@ -154,6 +153,34 @@ class SnmpConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             )
 
         return self.async_show_form(step_id="sensor", data_schema=_sensor_schema())
+
+    async def async_step_import(self, import_data: dict[str, Any]) -> dict[str, Any]:
+        """Import a YAML sensor, merging it into an existing device entry."""
+        device = {k: v for k, v in import_data.items() if k != CONF_SENSORS}
+        sensors = import_data[CONF_SENSORS]
+        unique_id = f"{device[CONF_HOST].casefold()}:{device[CONF_PORT]}"
+        await self.async_set_unique_id(unique_id)
+
+        entry = self.hass.config_entries.async_entry_for_domain_unique_id(
+            DOMAIN, unique_id
+        )
+        if entry is not None:
+            existing = list(entry.options.get(CONF_SENSORS, []))
+            known = {sensor[CONF_BASEOID] for sensor in existing}
+            new = [s for s in sensors if s[CONF_BASEOID] not in known]
+            if new:
+                _LOGGER.debug("Adding %d imported sensor(s) to %s", len(new), unique_id)
+                self.hass.config_entries.async_update_entry(
+                    entry, options={**entry.options, CONF_SENSORS: existing + new}
+                )
+            return self.async_abort(reason="already_configured")
+
+        _LOGGER.debug("Creating device %s from YAML import", unique_id)
+        return self.async_create_entry(
+            title=device[CONF_NAME],
+            data=device,
+            options={CONF_SENSORS: sensors},
+        )
 
     @staticmethod
     @callback

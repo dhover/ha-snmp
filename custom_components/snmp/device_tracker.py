@@ -1,5 +1,9 @@
 """Support for fetching WiFi associations through SNMP."""
 
+# pyright: reportMissingImports=false
+# pylint: disable=import-error
+# ruff: noqa: I001
+
 import binascii
 import logging
 from typing import TYPE_CHECKING, override
@@ -55,7 +59,7 @@ PLATFORM_SCHEMA = DEVICE_TRACKER_PLATFORM_SCHEMA.extend(
 
 async def async_get_scanner(
     hass: HomeAssistant, config: ConfigType
-) -> SnmpScanner | None:
+) -> "SnmpScanner | None":
     """Validate the configuration and return an SNMP scanner."""
     scanner = await SnmpScanner.create(config[DEVICE_TRACKER_DOMAIN])
     await scanner.async_init(hass)

@@ -1,0 +1,95 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Verbinden met een SNMP-apparaat",
+        "data": {
+          "name": "Apparaatnaam",
+          "host": "Host",
+          "port": "Poort",
+          "version": "SNMP-versie",
+          "community": "Community",
+          "username": "Gebruikersnaam",
+          "auth_key": "Authenticatiesleutel",
+          "auth_protocol": "Authenticatieprotocol",
+          "priv_key": "Privacy-sleutel",
+          "priv_protocol": "Privacyprotocol"
+        },
+        "data_description": {
+          "version": "SNMP-protocolversie: 1, 2c of 3. Voor het uitlezen van 64-bits tellers is versie 2c of hoger vereist."
+        }
+      },
+      "sensor": {
+        "title": "Eerste sensor toevoegen",
+        "data": {
+          "name": "Sensornaam",
+          "baseoid": "Objectidentifier (OID)",
+          "accept_errors": "SNMP-fouten accepteren",
+          "default_value": "Standaardwaarde bij fout",
+          "device_class": "Apparaatklasse",
+          "state_class": "Statusklasse",
+          "unit_of_measurement": "Meeteenheid"
+        }
+      }
+    },
+    "error": {
+      "username_required": "Voor SNMP-versie 3 is een gebruikersnaam vereist."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Dit apparaat beheren",
+        "menu_options": {
+          "edit_device": "Apparaatinstellingen wijzigen",
+          "add_sensor": "Sensor toevoegen",
+          "remove_sensor": "Sensor verwijderen"
+        }
+      },
+      "edit_device": {
+        "title": "Apparaatinstellingen wijzigen",
+        "data": {
+          "name": "Apparaatnaam",
+          "host": "Host",
+          "port": "Poort",
+          "version": "SNMP-versie",
+          "community": "Community",
+          "username": "Gebruikersnaam",
+          "auth_key": "Authenticatiesleutel",
+          "auth_protocol": "Authenticatieprotocol",
+          "priv_key": "Privacy-sleutel",
+          "priv_protocol": "Privacyprotocol"
+        },
+        "data_description": {
+          "version": "SNMP-protocolversie: 1, 2c of 3. Voor het uitlezen van 64-bits tellers is versie 2c of hoger vereist."
+        }
+      },
+      "add_sensor": {
+        "title": "Sensor toevoegen",
+        "data": {
+          "name": "Sensornaam",
+          "baseoid": "Objectidentifier (OID)",
+          "accept_errors": "SNMP-fouten accepteren",
+          "default_value": "Standaardwaarde bij fout",
+          "device_class": "Apparaatklasse",
+          "state_class": "Statusklasse",
+          "unit_of_measurement": "Meeteenheid"
+        }
+      },
+      "remove_sensor": {
+        "title": "Sensor verwijderen",
+        "data": {
+          "baseoid": "Sensor"
+        }
+      }
+    },
+    "error": {
+      "sensor_exists": "Er is al een sensor met deze OID ingesteld.",
+      "username_required": "Voor SNMP-versie 3 is een gebruikersnaam vereist.",
+      "already_configured": "Er is al een ander apparaat met deze host en poort ingesteld."
+    },
+    "abort": {
+      "no_sensors": "Er zijn geen sensors om te verwijderen."
+    }
+  }
+}

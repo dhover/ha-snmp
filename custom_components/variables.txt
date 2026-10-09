@@ -1,0 +1,23 @@
+SNMP 
+https://www.home-assistant.io/integrations/snmp/
+
+accept_errors string (Optional, default: false)
+auth_key string (Optional, default: no key)
+auth_protocol string (Optional, default: none)
+baseoid string Required
+community string (Optional, default: public)
+default_value string (Optional)
+device_class string (Optional)
+host string (Optional, default: localhost)
+icon template (Optional)
+name template (Optional, default: SNMP)
+picture template (Optional)
+port string (Optional, default: 161)
+priv_key string (Optional, default: no key)
+priv_protocol string (Optional, default: none)
+state_class string (Optional)
+unique_id string (Optional)
+unit_of_measurement string (Optional)
+username string (Optional)
+value_template template (Optional)
+version string (Optional, default: 1)

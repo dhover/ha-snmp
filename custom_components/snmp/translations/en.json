@@ -1,0 +1,95 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect to an SNMP device",
+        "data": {
+          "name": "Device name",
+          "host": "Host",
+          "port": "Port",
+          "version": "SNMP version",
+          "community": "Community",
+          "username": "Username",
+          "auth_key": "Authentication key",
+          "auth_protocol": "Authentication protocol",
+          "priv_key": "Privacy key",
+          "priv_protocol": "Privacy protocol"
+        },
+        "data_description": {
+          "version": "Version of SNMP protocol: 1, 2c, or 3. Version 2c or higher is needed to read data from 64-bit counters."
+        }
+      },
+      "sensor": {
+        "title": "Add the first sensor",
+        "data": {
+          "name": "Sensor name",
+          "baseoid": "Object identifier (OID)",
+          "accept_errors": "Accept SNMP errors",
+          "default_value": "Default value on error",
+          "device_class": "Device class",
+          "state_class": "State class",
+          "unit_of_measurement": "Unit of measurement"
+        }
+      }
+    },
+    "error": {
+      "username_required": "A username is required for SNMP version 3."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Manage this device",
+        "menu_options": {
+          "edit_device": "Edit device settings",
+          "add_sensor": "Add a sensor",
+          "remove_sensor": "Remove a sensor"
+        }
+      },
+      "edit_device": {
+        "title": "Edit device settings",
+        "data": {
+          "name": "Device name",
+          "host": "Host",
+          "port": "Port",
+          "version": "SNMP version",
+          "community": "Community",
+          "username": "Username",
+          "auth_key": "Authentication key",
+          "auth_protocol": "Authentication protocol",
+          "priv_key": "Privacy key",
+          "priv_protocol": "Privacy protocol"
+        },
+        "data_description": {
+          "version": "Version of SNMP protocol: 1, 2c, or 3. Version 2c or higher is needed to read data from 64-bit counters."
+        }
+      },
+      "add_sensor": {
+        "title": "Add a sensor",
+        "data": {
+          "name": "Sensor name",
+          "baseoid": "Object identifier (OID)",
+          "accept_errors": "Accept SNMP errors",
+          "default_value": "Default value on error",
+          "device_class": "Device class",
+          "state_class": "State class",
+          "unit_of_measurement": "Unit of measurement"
+        }
+      },
+      "remove_sensor": {
+        "title": "Remove a sensor",
+        "data": {
+          "baseoid": "Sensor"
+        }
+      }
+    },
+    "error": {
+      "sensor_exists": "A sensor with this OID is already configured.",
+      "username_required": "A username is required for SNMP version 3.",
+      "already_configured": "Another device with this host and port is already configured."
+    },
+    "abort": {
+      "no_sensors": "There are no sensors configured to remove."
+    }
+  }
+}

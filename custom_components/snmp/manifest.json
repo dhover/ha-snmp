@@ -4,6 +4,7 @@
   "codeowners": ["@dhover"],
   "config_flow": true,
   "documentation": "https://github.com/dhover/ha-snmp",
+  "issue_tracker": "https://github.com/dhover/ha-snmp/issues",
   "iot_class": "local_polling",
   "loggers": ["pyasn1", "pysmi", "pysnmp"],
   "quality_scale": "legacy",

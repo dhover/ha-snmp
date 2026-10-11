@@ -3,11 +3,13 @@
   "name": "SNMP",
   "codeowners": ["@dhover"],
   "config_flow": true,
+  "dependencies": [],
   "documentation": "https://github.com/dhover/ha-snmp",
+  "integration_type": "hub",
+  "iot_class": "local_polling",
   "issue_tracker": "https://github.com/dhover/ha-snmp/issues",
   "iot_class": "local_polling",
   "loggers": ["pyasn1", "pysmi", "pysnmp"],
-  "quality_scale": "legacy",
   "requirements": [],
   "version": "1.1.1"
 }

@@ -1,5 +1,6 @@
 {
   "name": "SNMP GUI",
-  "country": "NL",
-  "homeassistant": "2026.10.0"
+  "content_in_root": false,
+  "zip_release": true,
+  "filename": "custom_components/snmp_gui"
 }

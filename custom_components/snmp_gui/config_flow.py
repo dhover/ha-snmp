@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+from enum import Enum
 from typing import Any
 
 import voluptuous as vol
@@ -13,6 +14,11 @@ from homeassistant.const import (
     CONF_PORT,
     CONF_UNIT_OF_MEASUREMENT,
     CONF_USERNAME,
+)
+from homeassistant.components.sensor import (
+    DEVICE_CLASS_UNITS,
+    SensorDeviceClass,
+    SensorStateClass,
 )
 from homeassistant.core import callback
 from homeassistant.helpers import config_validation as cv
@@ -50,6 +56,24 @@ _LOGGER = logging.getLogger(__name__)
 
 CONF_DEVICE_CLASS = "device_class"
 CONF_STATE_CLASS = "state_class"
+
+def _unit_options() -> list[str]:
+    """Return all units Home Assistant allows for any sensor device class."""
+    units: set[str] = set()
+    for entries in DEVICE_CLASS_UNITS.values():
+        for entry in entries:
+            if entry is None:
+                continue
+            if isinstance(entry, type) and issubclass(entry, Enum):
+                units.update(str(member.value) for member in entry)
+            else:
+                units.add(str(entry))
+    return sorted(units)
+
+
+DEVICE_CLASS_OPTIONS = sorted(device_class.value for device_class in SensorDeviceClass)
+STATE_CLASS_OPTIONS = [state_class.value for state_class in SensorStateClass]
+UNIT_OPTIONS = _unit_options()
 
 
 def _device_schema() -> vol.Schema:
@@ -97,9 +121,25 @@ def _sensor_schema() -> vol.Schema:
             vol.Required(CONF_BASEOID): cv.string,
             vol.Optional(CONF_ACCEPT_ERRORS, default=False): cv.boolean,
             vol.Optional(CONF_DEFAULT_VALUE): cv.string,
-            vol.Optional(CONF_DEVICE_CLASS): cv.string,
-            vol.Optional(CONF_STATE_CLASS): cv.string,
-            vol.Optional(CONF_UNIT_OF_MEASUREMENT): cv.string,
+            vol.Optional(CONF_DEVICE_CLASS): SelectSelector(
+                SelectSelectorConfig(
+                    options=DEVICE_CLASS_OPTIONS,
+                    mode=SelectSelectorMode.DROPDOWN,
+                )
+            ),
+            vol.Optional(CONF_STATE_CLASS): SelectSelector(
+                SelectSelectorConfig(
+                    options=STATE_CLASS_OPTIONS,
+                    mode=SelectSelectorMode.DROPDOWN,
+                )
+            ),
+            vol.Optional(CONF_UNIT_OF_MEASUREMENT): SelectSelector(
+                SelectSelectorConfig(
+                    options=UNIT_OPTIONS,
+                    mode=SelectSelectorMode.DROPDOWN,
+                    custom_value=True,
+                )
+            ),
         }
     )
 

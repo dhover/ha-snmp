@@ -1,4 +1,5 @@
 {
-  "name": "SNMP",
-  "render_readme": true
+  "name": "SNMP GUI",
+  "country": "NL",
+  "homeassistant": "2026.10.0"
 }

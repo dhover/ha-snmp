@@ -2,7 +2,7 @@
   "domain": "snmp_gui",
   "name": "SNMP GUI",
   "codeowners": [
-    "dhover"
+    "@dhover"
   ],
   "config_flow": true,
   "dependencies": [],

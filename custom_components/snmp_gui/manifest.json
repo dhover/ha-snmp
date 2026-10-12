@@ -1,5 +1,5 @@
 {
-  "domain": "snmp",
+  "domain": "snmp_gui",
   "name": "SNMP",
   "codeowners": [
     "dhover"

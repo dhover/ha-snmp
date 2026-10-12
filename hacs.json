@@ -1,6 +1,4 @@
 {
   "name": "SNMP",
-  "country": [
-    "NL"
-  ] 
+  "render_readme": true
 }

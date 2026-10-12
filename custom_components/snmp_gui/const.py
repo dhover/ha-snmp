@@ -1,6 +1,6 @@
 """SNMP constants."""
 
-DOMAIN = "snmp"
+DOMAIN = "snmp_gui"
 
 CONF_ACCEPT_ERRORS = "accept_errors"
 CONF_AUTH_KEY = "auth_key"
